@@ -4,6 +4,7 @@ import { pgTable, text, timestamp, boolean, index } from "drizzle-orm/pg-core"
 export const accessCodesTable = pgTable("access_codes", {
   code: text().primaryKey(),
   user: text(),
+  createdBy: text("created_by").notNull(),
 })
 
 // auth below
