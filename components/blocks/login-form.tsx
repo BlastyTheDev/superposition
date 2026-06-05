@@ -21,6 +21,10 @@ import Link from "next/link"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Controller, useForm } from "react-hook-form"
 import * as z from "zod"
+import { Spinner } from "@/components/ui/spinner"
+import { useState } from "react"
+import { authClient } from "@/lib/auth-client"
+import { useRouter } from "next/navigation"
 
 const loginSchema = z.object({
   email: z.email("Invalid email."),
@@ -31,6 +35,9 @@ export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+  const router = useRouter()
+  const [pending, setPending] = useState(false)
+
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -39,7 +46,26 @@ export function LoginForm({
     }
   })
 
-  function onSubmit(data: z.infer<typeof loginSchema>) {
+  async function onSubmit(formData: z.infer<typeof loginSchema>) {
+    await authClient.signIn.email({
+      email: formData.email,
+      password: formData.password,
+    }, {
+      onRequest: () => {
+        setPending(true)
+      },
+      onSuccess: () => {
+        setPending(false)
+        router.push("/")
+      },
+      onError: () => {
+        setPending(false)
+        form.setError("password", {
+          type: "server",
+          message: "Incorrect email or password."
+        })
+      }
+    })
   }
 
   return (
@@ -101,7 +127,9 @@ export function LoginForm({
         </CardContent>
         <CardFooter>
           <Field>
-            <Button type="submit" form="form-login">Log in</Button>
+            <Button type="submit" form="form-login" disabled={pending}>
+              {pending && <Spinner /> || "Log in"}
+            </Button>
             <FieldDescription className="text-center">
               Don&apos;t have an account? <Link href="/signup">Sign up</Link>
             </FieldDescription>
