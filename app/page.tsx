@@ -7,9 +7,9 @@ export default async function Page() {
     headers: await headers()
   })
 
-  // if (session) {
-  //   redirect("/dashboard")
-  // } else {
-  //   redirect("/login")
-  // }
+  if (session) {
+    redirect("/dashboard")
+  } else {
+    redirect("/login")
+  }
 }
