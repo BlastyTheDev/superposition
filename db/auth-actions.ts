@@ -36,5 +36,5 @@ export async function signup(data: {
       .where(eq(accessCodesTable.code, data.code))
   })
 
-  redirect("/")
+  redirect("/dashboard")
 }

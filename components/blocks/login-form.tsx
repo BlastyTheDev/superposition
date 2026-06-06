@@ -56,7 +56,7 @@ export function LoginForm({
       },
       onSuccess: () => {
         setPending(false)
-        router.push("/")
+        router.push("/dashboard")
       },
       onError: () => {
         setPending(false)
