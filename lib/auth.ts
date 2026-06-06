@@ -9,6 +9,16 @@ export const auth = betterAuth({
     provider: "pg",
     schema: schema,
   }),
+  user: {
+    additionalFields: {
+      admin: {
+        type: "boolean",
+        required: true,
+        defaultValue: false,
+        input: false,
+      },
+    },
+  },
   plugins: [nextCookies()],
   emailAndPassword: {
     enabled: true,
