@@ -34,6 +34,8 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { useState } from "react"
+import { Spinner } from "@/components/ui/spinner"
 
 export default function Navbar({ user }: { user: User | undefined }) {
   const items: {
@@ -94,6 +96,8 @@ function NavFooter({ user }: { user: User | undefined }) {
   const { isMobile } = useSidebar()
   const router = useRouter()
 
+  const [loggingOut, setLoggingOut] = useState(false)
+
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -134,14 +138,19 @@ function NavFooter({ user }: { user: User | undefined }) {
             <DropdownMenuItem onClick={async () => {
               await authClient.signOut({
                 fetchOptions: {
+                  onRequest: () => {
+                    setLoggingOut(true)
+                  },
                   onSuccess: () => {
                     router.push("/login")
                   }
                 }
               })
             }}>
-              <LogOut />
-              Log out
+              {
+                loggingOut && <Spinner /> ||
+                <><LogOut /> Log out</>
+              }
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
